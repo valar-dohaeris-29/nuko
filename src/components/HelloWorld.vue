@@ -1,31 +1,14 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
+  <div>
+    <ul class="flashcard-list">
+      <li v-on:click="toggleCard(card)" v-for="(card, index) in cards" v-bind:key="index">
+        <transition name="flip">
+          <p v-bind:key="card.flipped" class="card">
+            {{ card.flipped ? card.back : card.front }}
+            <span v-on:click="cards.splice(index, 1)" class="delete-card">X</span>
+          </p>
+        </transition>
+      </li>
     </ul>
   </div>
 </template>
@@ -33,26 +16,191 @@
 <script>
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
+  data() {
+    return {
+      cards: [
+        {
+          front: 'Do you have a map?',
+          back: 'Because I just got lost in your eyes.',
+          flipped: false,
+        },
+        {
+          front: 'Is your name Google?',
+          back: 'Because you have everything I\'ve been searching for.',
+          flipped: false,
+        },
+        {
+          front: 'Do you believe in love at first sight?',
+          back: 'or should I walk by again?',
+          flipped: false,
+        },
+        {
+          front: 'Are you a magician?',
+          back: 'Every time I look at you, everyone else disappears.',
+          flipped: false,
+        },
+        {
+          front: 'If you were a vegetable...',
+          back: 'You\'d be a cute-cumber!',
+          flipped: false,
+        },
+      ],
+      newFront: '',
+      newBack: '',
+      error: false
+    }
+  },
+  methods: {
+    toggleCard: function (card) {
+      card.flipped = !card.flipped;
+    },
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+body {
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
 }
+
 ul {
-  list-style-type: none;
-  padding: 0;
+  padding-left: 0;
+  display: flex;
+  flex-flow: row wrap;
 }
+
 li {
-  display: inline-block;
-  margin: 0 10px;
+  list-style-type: none;
+  padding: 10px 10px;
+  transition: all 0.3s ease;
 }
-a {
-  color: #42b983;
+
+.container {
+  max-width: 100%;
+  padding: 2em;
 }
+
+.card {
+  display: block;
+  width: 150px;
+  height: 175px;
+  padding: 80px 50px;
+  background-color: #51aae5;
+  border-radius: 7px;
+  margin: 5px;
+  text-align: center;
+  line-height: 27px;
+  cursor: pointer;
+  position: relative;
+  color: #fff;
+  font-weight: 600;
+  font-size: 20px;
+  -webkit-box-shadow: 9px 10px 22px -8px rgba(209, 193, 209, .5);
+  -moz-box-shadow: 9px 10px 22px -8px rgba(209, 193, 209, .5);
+  box-shadow: 9px 10px 22px -8px rgba(209, 193, 209, .5);
+  will-change: transform;
+}
+
+li:hover {
+  transform: scale(1.1);
+}
+
+li:nth-child(-n+3) .card {
+  background-color: #e65f51;
+}
+
+li:nth-child(2n+1) .card {
+  background-color: #a17de9;
+}
+
+li:nth-child(4n) .card {
+  background-color: #feca34;
+}
+
+li:nth-child(5n-2) .card {
+  background-color: #51aae5;
+}
+
+li:nth-child(4n+4) .card {
+  background-color: #feca34;
+}
+
+li:nth-child(-7n+7) .card {
+  background-color: #e46055;
+}
+
+.delete-card {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 10px 15px;
+  opacity: .4;
+  transition: all 0.5s ease;
+}
+
+.delete-card:hover, .error {
+  opacity: 1;
+  transform: rotate(360deg);
+}
+
+.flip-enter-active {
+  transition: all 0.4s ease;
+}
+
+.flip-leave-active {
+  display: none;
+}
+
+.flip-enter, .flip-leave {
+  transform: rotateY(180deg);
+  opacity: 0;
+
+}
+
+/* Form */
+.flashcard-form {
+  position: relative;
+}
+
+
+label {
+  font-weight: 400;
+  color: #333;
+  margin-right: 10px;
+}
+
+input {
+  border-radius: 5px;
+  border: 2px solid #eaeaea;
+  padding: 10px;
+  outline: none;
+}
+
+button {
+  border-radius: 5px;
+  border: 1px solid #87cb84;
+  background-color: #87cb84;
+  padding: 8px 15px;
+  outline: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #70a66f;
+}
+
+.error {
+  margin-top: 10px;
+  display: block;
+  color: #e44e42;
+  font-weight: 600;
+}
+
+
 </style>
